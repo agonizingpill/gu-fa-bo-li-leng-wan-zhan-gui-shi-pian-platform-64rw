@@ -11,9 +11,21 @@ export function workspace(root, role, page) {
       panel.replaceChildren(el('h2',{},page.caption),dataView(rows, page.columns,page.view));
     } catch (error) { panel.replaceChildren(status(error.message,'error')); }
   };
+  // 可选的第二张台账：与主台账一同刷新，例如用来看主记录的明细。
+  const extra = page.secondary ? el('section', {class:'ledger', 'aria-label':page.secondary.caption}) : null;
+  const refreshExtra = async () => {
+    if (!extra) return;
+    try {
+      const rows = await request(page.secondary.path);
+      extra.replaceChildren(el('h2',{},page.secondary.caption),
+        dataView(rows, page.secondary.columns, page.secondary.view ?? 'table'));
+    } catch (error) { extra.replaceChildren(status(error.message,'error')); }
+  };
+  const reload = () => Promise.all([refresh(), refreshExtra()]);
   const actions = page.actions.filter(x => x.roles.includes(role));
   root.replaceChildren(titleBlock(page.module, page.title, page.detail),
     el('div',{class:'work '+page.layout},panel,
-      actions.length ? el('section',{class:'actions'},actions.map(x => actionForm(x, refresh))) : null));
-  return refresh();
+      actions.length ? el('section',{class:'actions'},actions.map(x => actionForm(x, reload))) : null,
+      extra));
+  return reload();
 }

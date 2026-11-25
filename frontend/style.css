@@ -33,6 +33,7 @@ nav a[aria-current=page] { border-color:var(--accent); background:var(--tint); f
 .kicker { color:var(--accent); display:block; font-weight:750; margin-block-end:.45rem; letter-spacing:.08em }
 .intro { max-width:65ch; color:var(--soft); margin:0 }
 .work { display:grid; grid-template-columns:minmax(0, 1.35fr) minmax(0, 1fr); gap:clamp(1rem,2.5vw,2.5rem); align-items:start }
+.work + .ledger, .work > .ledger + .ledger { grid-column:1 / -1 }
 .work.stack { grid-template-columns:minmax(0,1fr) }
 .work.flip { grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) }
 .work.flip .actions { order:-1 }
